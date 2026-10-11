@@ -83,8 +83,8 @@ function App() {
                     color: isWinner ? "green" : "red",
                     fontWeight: "bold",
                 }}>
-                {isWinner && "You won! - Refresh to play again :)"}
-                {isLoser && "Nice try diddy! Refresh to try again :("}
+                {isWinner && "You won! - Press Enter for new game :)"}
+                {isLoser && "Nice try diddy! Press Enter to try again :("}
             </div>
             <HangmanDrawing numberOfGuesses={incorrectLetters.length} />
             <HangmanWord
