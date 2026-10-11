@@ -4,11 +4,13 @@ import {HangmanDrawing} from "./HangmanDrawing";
 import {HangmanWord} from "./HangmanWord";
 import {Keyboard} from "./Keyboard";
 
+const getWord = () => {
+    const randomIndex = Math.floor(Math.random() * words.length);
+    return words[randomIndex];
+};
+
 function App() {
-    const [wordToGuess, setWordToGuess] = useState<string>(() => {
-        const randomIndex = Math.floor(Math.random() * words.length);
-        return words[randomIndex];
-    });
+    const [wordToGuess, setWordToGuess] = useState<string>(getWord());
 
     const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
 
@@ -29,6 +31,23 @@ function App() {
         },
         [guessedLetters, isWinner, isLoser],
     );
+
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            const key = e.key;
+            if (key !== "Enter") return;
+
+            e.preventDefault();
+            setWordToGuess(getWord());
+            setGuessedLetters([]);
+        };
+
+        document.addEventListener("keypress", handler);
+
+        return () => {
+            document.removeEventListener("keypress", handler);
+        };
+    });
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
@@ -57,15 +76,19 @@ function App() {
                 alignItems: "center",
                 justifyContent: "center",
             }}>
-            <div style={{fontSize: "2rem", textAlign: "center"}}>
-                {isWinner && "Winner!! - Refresh to play again."}
-                {isLoser &&
-                    "Nice try diddy!! the word was: " +
-                        wordToGuess.toUpperCase() +
-                        "\tRefresh to try again."}
+            <div
+                style={{
+                    fontSize: "2rem",
+                    textAlign: "center",
+                    color: isWinner ? "green" : "red",
+                    fontWeight: "bold",
+                }}>
+                {isWinner && "You won! - Refresh to play again :)"}
+                {isLoser && "Nice try diddy! Refresh to try again :("}
             </div>
             <HangmanDrawing numberOfGuesses={incorrectLetters.length} />
             <HangmanWord
+                revealed={isLoser}
                 guessedLetters={guessedLetters}
                 wordToGuess={wordToGuess}
             />
